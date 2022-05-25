@@ -20,12 +20,10 @@ names = []
 for student in students:
     for atr, name in student.items():
         names.append(name)
-for name, count in Counter(names).items():
-    print(f'{name}: {count}')
+for name in set(names):
+    print(f'{name}: {names.count(name)}')
 print()
   
-
-
 # Задание 2
 # Дан список учеников, нужно вывести самое часто повторящееся имя
 # Пример вывода:
@@ -39,17 +37,18 @@ students = [
 ]
 names = []
 counts = 0
-name1 = ''
+name_user = ''
 for student in students:
     for atr, name in student.items():
         names.append(name)
-for name, count in Counter(names).items():
-    if counts < count:
-        counts = count
-        name1 = name
+for name in set(names):
+    if names.count(name) > counts:
+        print(names.count(name))
+        counts = names.count(name)
+        name_user = name
     else:
         continue
-print(f'Самое часток имя среди учеников: {name1}')
+print(f'Самое часток имя среди учеников: {name_user}')
 print()
 
 
@@ -80,17 +79,15 @@ for students in school_students:
     group += 1
     names = []
     counts = 0
-    name1 = ''
+    name_user = ''
     for student in students:
         for atr, name in student.items():
             names.append(name)
-    for name, count in Counter(names).items():
-        if counts < count:
-            counts = count
-            name1 = name
-        else:
-            continue
-    print(f'Самое часток имя в классе {group}: {name1}')
+    for name in set(names):
+        if names.count(name) > counts:
+            counts = names.count(name)
+            name_user = name
+    print(f'Самое часток имя в классе {group}: {name_user}')
 print()
 
 
@@ -113,17 +110,31 @@ is_male = {
     'Даша': False,
 }
 
-for number_of_classes in school:
+def male(name, count_m, count_f):
+    male_name = is_male[name]
+    if male_name:
+        count_m += 1
+    else:
+        count_f += 1
+    return count_m, count_f
+
+def school_class(total_school):
+    for number_of_classes in total_school:
         name_class = number_of_classes['class']
         count_m = 0
         count_f = 0
+        result = []
         for names in number_of_classes['students']:
             name_students = names['first_name']
-            if is_male[name_students] == True:
-                count_m += 1
-            else:
-                count_f += 1
-        print(f'Класс {name_class}: девочки {count_f}, мальчики {count_m}')
+            count_m, count_f = male(name_students, count_m, count_f)
+            result.append(f'Класс {name_class}: девочки {count_f}, мальчики {count_m}')
+    return result
+
+
+if __name__ == '__main__':
+    res = school_class(school)
+    for item in res:
+        print(item)
 print()
 
 # Задание 5
@@ -135,26 +146,37 @@ print()
 school = [
     {'class': '2a', 'students': [{'first_name': 'Маша'}, {'first_name': 'Оля'}]},
     {'class': '3c', 'students': [{'first_name': 'Олег'}, {'first_name': 'Миша'}]},
+    {'class': '2в', 'students': [{'first_name': 'Даша'}, {'first_name': 'Олег'}, {'first_name': 'Маша'}, {'first_name': 'Оля'}]},
 ]
 is_male = {
     'Маша': False,
     'Оля': False,
     'Олег': True,
     'Миша': True,
+    'Даша': False,
 }
 
+max_male = {'class_name': '', 'male': 0}
+max_female = {'class_name': '', 'female': 0}
 for number_of_classes in school:
         name_class = number_of_classes['class']
         count_m = 0
         count_f = 0
         for names in number_of_classes['students']:
             name_students = names['first_name']
-            if is_male[name_students] == True:
+            if is_male[name_students]:
                 count_m += 1
             else:
                 count_f += 1
-        if count_m > count_f:
-            print(f'Больше всего мальчиков в классе {name_class}')
-        else:
-            print(f'Больше всего девочек в классе {name_class}')
+        if count_m > max_male['male']:
+            max_male['male'] = count_m
+            max_male['class_name'] = name_class
+        if count_f > max_female['female']:
+            max_female['female'] = count_f
+            max_female['class_name'] = name_class
+
+
+print(f'Больше всего мальчиков в классе {max_male["class_name"]}')
+print(f'Больше всего девочек в классе {max_female["class_name"]}')
+
 
